@@ -32,9 +32,19 @@ const userSchema = new Schema({
   },
 });
 
-console.dir(db);
+//console.dir(db);
 
 const User = mongoose.connection.model('User', userSchema);
+
+const testUserObj = {
+  name: 'Test',
+  surname: 'Testovich',
+  role: 'USER',
+  email: 'test@mail.com'
+};
+
+const testUser = new User(testUserObj);
+testUser.save().then(console.log).catch(console.error);
 
 mongoose.connect("mongodb://localhost:27017/mongotest", (error) => {
   error
