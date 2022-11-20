@@ -1,53 +1,21 @@
-const yup = require('yup');
-const mongoose = require("mongoose");
-const db = mongoose.connection;
+const express = require("express");
+const {
+  addUser,
+  deleteUser,
+  updateUser,
+  getUserById,
+} = require("./controllers/user.controller.js");
 
-const emailVS = yup.string().email();
+const app = express();
+const PORT = process.env.PORT || 5000;
+app.use(express.json());
 
-const Schema = mongoose.Schema;
+app.post('/user', addUser);
+app.get('/user', getUserById);
+app.put('/user', updateUser);
+app.delete('/user', deleteUser);
 
-const userSchema = new Schema({
-  name: {
-    type: String,
-    required: false,
-    minLength: 1,
-  },
-  surname: {
-    type: String,
-    required: false,
-    minLength: 1,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    validate: {
-      validator: value => emailVS.validate(value)
-    }
-  },
-  role: {
-    type: String,
-    enum: ["USER", "ADMIN", "MODERATOR"],
-    required: true,
-  },
+app.listen(PORT, () => {
+  console.log('Server is listening...');
 });
 
-//console.dir(db);
-
-const User = mongoose.connection.model('User', userSchema);
-
-const testUserObj = {
-  name: 'Test',
-  surname: 'Testovich',
-  role: 'USER',
-  email: 'test@mail.com'
-};
-
-const testUser = new User(testUserObj);
-testUser.save().then(console.log).catch(console.error);
-
-mongoose.connect("mongodb://localhost:27017/mongotest", (error) => {
-  error
-    ? console.error("Error conection with mongod")
-    : console.log("Connection with mondo db is success!!! ");
-});
