@@ -1,5 +1,8 @@
+const yup = require('yup');
 const mongoose = require("mongoose");
 const db = mongoose.connection;
+
+const emailVS = yup.string().email();
 
 const Schema = mongoose.Schema;
 
@@ -18,7 +21,9 @@ const userSchema = new Schema({
     type: String,
     required: true,
     unique: true,
-    minLength: 3,
+    validate: {
+      validator: value => emailVS.validate(value)
+    }
   },
   role: {
     type: String,
@@ -28,6 +33,8 @@ const userSchema = new Schema({
 });
 
 console.dir(db);
+
+const User = mongoose.connection.model('User', userSchema);
 
 mongoose.connect("mongodb://localhost:27017/mongotest", (error) => {
   error
